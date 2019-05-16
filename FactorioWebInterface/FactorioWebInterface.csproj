@@ -119,6 +119,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FactorioWrapperInterface\Shared.csproj" />
+    <ProjectReference Include="..\SymbolicLinkSupport\SymbolicLinkSupport.csproj" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

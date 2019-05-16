@@ -1038,18 +1038,43 @@ namespace FactorioWebInterface.Services
             string serverId = serverData.ServerId;
             string localScenarioDirectoryPath = serverData.LocalScenarioDirectoryPath;
 
+            var globalScenarios = new DirectoryInfo(FactorioServerData.ScenarioDirectoryPath);
+            if (!globalScenarios.Exists)
+            {
+                globalScenarios.Create();
+            }
+
             var dir = new DirectoryInfo(localScenarioDirectoryPath);
+
             if (!dir.Exists)
             {
-                FileHelpers.CreateDirectorySymlink(FactorioServerData.ScenarioDirectoryPath, localScenarioDirectoryPath);
+                dir.Create();
+                globalScenarios.CreateDirectorySymlink(serverData.ScenarioDirectoryLinkPath);
             }
-            else if (!FileHelpers.IsSymbolicLink(localScenarioDirectoryPath))
+            else if (dir.IsSymbolicLink())
             {
                 dir.Delete(true);
-                FileHelpers.CreateDirectorySymlink(FactorioServerData.ScenarioDirectoryPath, localScenarioDirectoryPath);
+
+                dir.Create();
+                globalScenarios.CreateDirectorySymlink(serverData.ScenarioDirectoryLinkPath);
+            }
+            else
+            {
+                var link = new DirectoryInfo(serverData.ScenarioDirectoryLinkPath);
+                if (!link.Exists)
+                {
+                    globalScenarios.CreateDirectorySymlink(serverData.ScenarioDirectoryLinkPath);
+                }
+                else if (!link.IsSymbolicLink())
+                {
+                    link.Delete();
+                    globalScenarios.CreateDirectorySymlink(serverData.ScenarioDirectoryLinkPath);
+                }
             }
 
             string modDirPath = await PrepareServer(serverData);
+
+            scenarioName = Path.Combine(Constants.ScenarioDirectoryName, scenarioName);
 
             string fullName;
             string arguments;

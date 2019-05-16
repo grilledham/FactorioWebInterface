@@ -35,6 +35,7 @@ namespace FactorioWebInterface.Models
         public string TempSavesDirectoryPath { get; set; }
         public string LocalSavesDirectoroyPath { get; set; }
         public string LocalScenarioDirectoryPath { get; set; }
+        public string ScenarioDirectoryLinkPath { get; set; }
         public string LogsDirectoryPath { get; set; }
         public string ArchiveLogsDirectoryPath { get; set; }
         public string CurrentLogPath { get; set; }
@@ -94,7 +95,7 @@ namespace FactorioWebInterface.Models
                     ServerSettingsPath = Path.Combine(basePath, Constants.ServerSettingsFileName),
                     ServerExtraSettingsPath = Path.Combine(basePath, Constants.ServerExtraSettingsFileName),
                     LocalScenarioDirectoryPath = Path.Combine(basePath, Constants.ScenarioDirectoryName),
-
+                    ScenarioDirectoryLinkPath = Path.Combine(basePath, Constants.ScenarioDirectoryName, Constants.ScenarioDirectoryName),
                     LogsDirectoryPath = Path.Combine(basePath, Constants.LogDirectoryName),
                     ArchiveLogsDirectoryPath = Path.Combine(basePath, Constants.LogDirectoryName, Constants.ArchiveDirectoryName),
                     CurrentLogPath = Path.Combine(basePath, Constants.CurrentLogFileName),

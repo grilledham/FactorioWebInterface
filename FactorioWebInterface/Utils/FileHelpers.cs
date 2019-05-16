@@ -1,23 +1,28 @@
-﻿namespace FactorioWebInterface.Utils
+﻿#if WINDOWS
+using SymbolicLinkSupport;
+#endif
+
+using System.IO;
+
+namespace FactorioWebInterface.Utils
 {
     public static class FileHelpers
     {
-        public static bool CreateDirectorySymlink(string targetPath, string linkPath)
+        public static void CreateDirectorySymlink(this DirectoryInfo directoryInfo, string linkPath)
         {
 #if WINDOWS
-            return ProcessHelper.RunProcessToEnd("cmd.exe", $"/C MKLINK /D \"{linkPath}\" \"{targetPath}\"");
+            ProcessHelper.RunProcessToEnd("cmd.exe", $"/C MKLINK /D \"{linkPath}\" \"{directoryInfo.FullName}\"");
 #else
-            return ProcessHelper.RunProcessToEnd("/bin/ln", $"-s {targetPath} {linkPath}");      
+            ProcessHelper.RunProcessToEnd("/bin/ln", $"-s {directoryInfo.FullName} {linkPath}");
 #endif
         }
 
-        public static bool IsSymbolicLink(string filePath)
+        public static bool IsSymbolicLink(this DirectoryInfo directoryInfo)
         {
 #if WINDOWS
-            // Todo implement IsSymbolicLink for windows.
-            return false; // Hack: Assume it's not a symbolic link so that it will be deleted and recreated as one.
+            return DirectoryInfoExtensions.IsSymbolicLink(directoryInfo);
 #else
-            return ProcessHelper.RunProcessToEnd("/bin/bash", $"-c \"if [ ! -L {filePath} ] ; then exit 1 ; fi\"");
+            return ProcessHelper.RunProcessToEnd("/bin/bash", $"-c \"if [ ! -L {directoryInfo.FullName} ] ; then exit 1 ; fi\"");
 #endif
         }
     }
