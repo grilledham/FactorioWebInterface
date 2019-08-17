@@ -1270,6 +1270,11 @@ namespace FactorioWebInterface.Services
             return _factorioProcessHub.Clients.Group(serverId).SendToFactorio(data);
         }
 
+        public Task SendArrayToFactorioProcess(string serverId, string[] data)
+        {
+            return _factorioProcessHub.Clients.Group(serverId).SendArrayToFactorio(data);
+        }
+
         public async Task SendToFactorioControl(string serverId, MessageData data)
         {
             if (!servers.TryGetValue(serverId, out var serverData))
@@ -1486,6 +1491,9 @@ namespace FactorioWebInterface.Services
                     break;
                 case Constants.DataGetAllTag:
                     _ = DoGetAllData(serverId, content);
+                    break;
+                case Constants.DataGetAllParallelTag:
+                    _ = DoGetAllDataParallel(serverId, content);
                     break;
                 case Constants.DataTrackedTag:
                     _ = DoTrackedData(serverId, content);
@@ -1887,6 +1895,121 @@ namespace FactorioWebInterface.Services
             }
         }
 
+        private async Task DoGetAllDataParallel(string serverId, string content)
+        {
+            int space = content.IndexOf(' ');
+            if (space < 0)
+            {
+                return;
+            }
+
+            int rest = content.Length - space - 1;
+            if (rest < 1)
+            {
+                return;
+            }
+
+            string transactionId = content.Substring(0, space);
+            string dataString = content.Substring(space + 1, rest);
+
+            ScenarioDataEntry data;
+            try
+            {
+                data = JsonConvert.DeserializeObject<ScenarioDataEntry>(dataString);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, nameof(DoGetAllDataParallel) + " deserialization");
+                return;
+            }
+
+            if (data.DataSet == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var entries = await _scenarioDataManger.GetAllEntries(data.DataSet);
+
+                var sb = new StringBuilder();
+                sb.Append("{data_set=\"").Append(data.DataSet).Append('\"');
+
+                if (entries.Length == 0)
+                {
+                    sb.Append('}');
+                }
+                else
+                {
+                    sb.Append(",entries={");
+                    for (int i = 0; i < entries.Length; i++)
+                    {
+                        var entry = entries[i];
+                        sb.Append("[\"").Append(entry.Key).Append("\"]=").Append(entry.Value).Append(',');
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    sb.Append("}}");
+                }
+
+                int packetSize = 600 - 30;
+
+                if (sb.Length < packetSize)
+                {
+                    string command = $"/sc _=S _=_ and _.f({transactionId},1,{sb})";
+                    await SendToFactorioProcess(serverId, command);
+                }
+                else
+                {
+                    int size = sb.Length / packetSize;
+                    if (size * packetSize < sb.Length)
+                    {
+                        size++;
+                    }
+
+                    string[] commands = new string[size];
+                    for (int i = 0; i < size; i++)
+                    {
+                        int length = Math.Min(packetSize, sb.Length - packetSize * i);
+                        string packetData = sb.ToString(i * packetSize, length);
+                        if (i == 0)
+                        {
+                            commands[i] = $"/sc _=S _=_ and _.f({transactionId},{size},\"{packetData}\")";
+                        }
+                        else
+                        {
+                            commands[i] = $"/sc _=S _=_ and _.p({transactionId},{i + 1},\"{packetData}\")";
+                        }
+                    }
+
+                    int maxArraySize = 100;
+
+                    if (size <= maxArraySize)
+                    {
+                        await SendArrayToFactorioProcess(serverId, commands);
+                    }
+                    else
+                    {
+                        int start = 0;
+                        while (start < size)
+                        {
+                            int length = Math.Min(maxArraySize, size - start);
+                            var temp = new string[length];
+                            Array.Copy(commands, start, temp, 0, length);
+
+                            await SendArrayToFactorioProcess(serverId, temp);
+                            await Task.Delay(1000 / 60); // 1 factorio game tick.
+
+                            start += maxArraySize;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, nameof(DoGetAllData));
+            }
+        }
+
         private async Task DoSetData(string serverId, string content)
         {
             ScenarioDataEntry data;
@@ -1936,6 +2059,31 @@ namespace FactorioWebInterface.Services
             if (string.IsNullOrWhiteSpace(data))
             {
                 return;
+            }
+
+            if (data.StartsWith("//"))
+            {
+                int count = int.Parse(data.Substring(2));
+                var junk = new string('a', 10000);
+
+                var commands = new string[count];
+
+                for (int i = 0; i < commands.Length; i++)
+                {
+                    commands[i] = $"/sc a='{junk}' print(game.tick .. ':' .. {i})";
+                }
+
+                _ = SendArrayToFactorioProcess(serverId, commands);
+
+                //var sb = new StringBuilder("/c local t = game.tick local s = '");
+                //sb.Append('a', count);
+                //sb.Append("' print(t - global.tick)");
+                //var command = sb.ToString();
+
+                //Debug.WriteLine(command.Length);
+
+                //_ = SendToFactorioProcess(serverId, "/c global.tick = game.tick");
+                //_ = SendToFactorioProcess(serverId, command);
             }
 
             if (data.StartsWith("/ban "))

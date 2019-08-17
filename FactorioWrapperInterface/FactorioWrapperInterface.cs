@@ -22,6 +22,7 @@ namespace Shared
     public interface IFactorioProcessClientMethods
     {
         Task SendToFactorio(string data);
+        Task SendArrayToFactorio(string[] data);
         Task Stop();
         Task ForceStop();
         Task GetStatus();

@@ -86,6 +86,7 @@
         public const string DataSetTag = "[DATA-SET]";
         public const string DataGetTag = "[DATA-GET]";
         public const string DataGetAllTag = "[DATA-GET-ALL]";
+        public const string DataGetAllParallelTag = "[DATA-GET-ALL-PARALLEL]";
         public const string DataTrackedTag = "[DATA-TRACKED]";
         public const string QueryPlayersTag = "[QUERY-PLAYERS]";
 

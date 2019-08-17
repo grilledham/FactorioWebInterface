@@ -245,6 +245,35 @@ namespace FactorioWrapper
             }
         }
 
+        private async Task SendArrayToFactorio(string[] data)
+        {
+            try
+            {
+                await factorioProcessLock.WaitAsync();
+
+                var p = factorioProcess;
+                if (p != null && !p.HasExited)
+                {
+                    foreach (var message in data)
+                    {
+#if WINDOWS
+                        rcon?.ExecuteCommandAsync(message);
+#else
+                        await p.StandardInput.WriteLineAsync(message);
+#endif
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Error sending data to factorio process");
+            }
+            finally
+            {
+                factorioProcessLock.Release();
+            }
+        }
+
         private void BuildConenction()
         {
             Log.Information("Building connection");
@@ -272,7 +301,12 @@ namespace FactorioWrapper
 
             connection.On<string>(nameof(IFactorioProcessClientMethods.SendToFactorio), async data =>
             {
-                await SendToFactorio(data);
+                _ = SendToFactorio(data);
+            });
+
+            connection.On<string[]>(nameof(IFactorioProcessClientMethods.SendArrayToFactorio), async data =>
+            {
+                _ = SendArrayToFactorio(data);
             });
 
             connection.On(nameof(IFactorioProcessClientMethods.Stop), async () =>
