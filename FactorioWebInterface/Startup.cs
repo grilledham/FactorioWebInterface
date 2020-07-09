@@ -2,6 +2,7 @@ using FactorioWebInterface.Data;
 using FactorioWebInterface.Hubs;
 using FactorioWebInterface.Models;
 using FactorioWebInterface.Services;
+using FactorioWebInterface.Services.Api;
 using FactorioWebInterface.Services.Discord;
 using FactorioWebInterface.Utils;
 using FactorioWebInterface.Utils.ProcessAbstractions;
@@ -112,6 +113,7 @@ namespace FactorioWebInterface
             services.AddSingleton<BanHubEventHandlerService, BanHubEventHandlerService>();
             services.AddSingleton<FactorioAdminServiceEventHandlerService, FactorioAdminServiceEventHandlerService>();
             services.AddSingleton<IFactorioModPortalService, FactorioModPortalService>();
+            services.AddSingleton<IServersService, ServersService>();
 
             services.AddRouting(o => o.LowercaseUrls = true);
 
