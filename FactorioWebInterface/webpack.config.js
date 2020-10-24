@@ -23,7 +23,8 @@ module.exports = (env, argv) => {
             bans: "./client/pages/bans/bansPage.ts",
             scenarioData: "./client/pages/scenarioData/scenarioDataPage.ts",
             mods: "./client/pages/mods/modsPage.ts",
-            account: "./client/pages/account/accountPage.ts"
+            account: "./client/pages/account/accountPage.ts",
+            test: "./client/test.ts"
         };
     }
 

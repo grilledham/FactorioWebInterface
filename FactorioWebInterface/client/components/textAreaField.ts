@@ -37,6 +37,12 @@ export class TextareaField extends InputFieldBase {
 
         return EventListener.onChange(this._input, callback);
     }
+
+    onInput(handler: (value: string) => void): () => void {
+        let callback = () => handler(this.value)
+
+        return EventListener.onInput(this._input, callback);
+    }
 }
 
 customElements.define('a-textarea-field', TextareaField);

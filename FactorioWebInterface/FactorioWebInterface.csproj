@@ -44,8 +44,18 @@
     <None Remove="client\pages\servers\manageVersionViewModel.spec.ts" />
     <None Remove="client\pages\servers\modPacksViewModel.spec.ts" />
     <None Remove="client\pages\servers\scenariosViewModel.spec.ts" />
+    <None Remove="client\test.ts" />
     <None Remove="client\utils\binding\bindingSource.spec.ts" />
     <None Remove="client\utils\collections\observableKeyArray.spec.ts" />
+    <None Remove="client\utils\decoratorStorage.ts" />
+    <None Remove="client\utils\form\decorators.ts" />
+    <None Remove="client\utils\form\formModel.spec.ts" />
+    <None Remove="client\utils\form\formModel.ts" />
+    <None Remove="client\utils\form\module.ts" />
+    <None Remove="client\utils\sanitization\module.ts" />
+    <None Remove="client\utils\sanitizer.ts" />
+    <None Remove="client\utils\sanitizers.ts" />
+    <None Remove="client\utils\validation\validationRules.ts" />
     <None Remove="FactorioWebInterface.db" />
     <None Remove="Scenario.db" />
     <None Remove="client\components\button.ts" />
@@ -461,6 +471,7 @@
     <TypeScriptCompile Include="client\services\requestVerificationService.ts" />
     <TypeScriptCompile Include="client\services\viewLocator.ts" />
     <TypeScriptCompile Include="client\services\windowService.ts" />
+    <TypeScriptCompile Include="client\test.ts" />
     <TypeScriptCompile Include="client\testUtils\invokeBase.ts" />
     <TypeScriptCompile Include="client\testUtils\models\formDataMock.ts" />
     <TypeScriptCompile Include="client\testUtils\pages\admins\adminsHubServiceMockBase.ts" />
@@ -514,9 +525,14 @@
     <TypeScriptCompile Include="client\utils\commandHistory.spec.ts" />
     <TypeScriptCompile Include="client\utils\commandHistory.ts" />
     <TypeScriptCompile Include="client\utils\comparatorHelper.ts" />
+    <TypeScriptCompile Include="client\utils\decoratorStorage.ts" />
     <TypeScriptCompile Include="client\utils\eventListener.ts" />
     <TypeScriptCompile Include="client\utils\fieldId.ts" />
     <TypeScriptCompile Include="client\utils\fileHelper.ts" />
+    <TypeScriptCompile Include="client\utils\form\decorators.ts" />
+    <TypeScriptCompile Include="client\utils\form\formModel.spec.ts" />
+    <TypeScriptCompile Include="client\utils\form\formModel.ts" />
+    <TypeScriptCompile Include="client\utils\form\module.ts" />
     <TypeScriptCompile Include="client\utils\functions.ts" />
     <TypeScriptCompile Include="client\utils\globalStore.ts" />
     <TypeScriptCompile Include="client\utils\iterableHelper.ts" />
@@ -530,11 +546,15 @@
     <TypeScriptCompile Include="client\utils\observableObject.ts" />
     <TypeScriptCompile Include="client\utils\observableProperty.ts" />
     <TypeScriptCompile Include="client\utils\promiseHelper.ts" />
+    <TypeScriptCompile Include="client\utils\sanitization\module.ts" />
+    <TypeScriptCompile Include="client\utils\sanitization\sanitizer.ts" />
+    <TypeScriptCompile Include="client\utils\sanitization\sanitizers.ts" />
     <TypeScriptCompile Include="client\utils\serviceLocator.ts" />
     <TypeScriptCompile Include="client\utils\types.ts" />
     <TypeScriptCompile Include="client\utils\validation\module.ts" />
     <TypeScriptCompile Include="client\utils\validation\validationGroup.spec.ts" />
     <TypeScriptCompile Include="client\utils\validation\validationRule.spec.ts" />
+    <TypeScriptCompile Include="client\utils\validation\validationRules.ts" />
     <TypeScriptCompile Include="client\utils\validation\validator.spec.ts" />
     <TypeScriptCompile Include="client\utils\validation\validator.ts" />
   </ItemGroup>

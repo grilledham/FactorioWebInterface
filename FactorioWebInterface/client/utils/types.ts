@@ -3,3 +3,7 @@
 export type propertyOf<T> = Extract<keyof T, string>;
 
 export function nameof<T>(name: Extract<keyof T, string>): string { return name; }
+
+export interface Type<T> extends Function {
+    new(...args: any[]): T;
+}

@@ -1,9 +1,9 @@
 ﻿import { ValidationResult } from "./ValidationResult";
-import { IValidationRule, NotEmptyString, NoWhitespaceString, NotNull, MaxStringLength, MinMaxStringLength, EqualToOtherString } from "./validationRule";
+import { IValidationRule, NotEmptyString, NoWhitespaceString, NotNull, MaxLengthString, MinMaxLengthString, EqualToOtherString } from "./validationRule";
 
 export interface IValidationGroup<T> {
     key: any;
-    validate(obj: T): ValidationResult;
+    validate(obj: T, value?: any): ValidationResult;
 }
 
 export class PropertyValidation<T> implements IValidationGroup<T> {
@@ -34,8 +34,8 @@ export class PropertyValidation<T> implements IValidationGroup<T> {
         return this;
     }
 
-    validate(obj: T): ValidationResult {
-        const value = obj[this._name];
+    validate(obj: T, value?: any): ValidationResult {
+        value = value !== undefined ? value : obj[this._name];
         const errors: string[] = [];
 
         for (const rule of this._rules) {
@@ -69,12 +69,12 @@ export class PropertyValidation<T> implements IValidationGroup<T> {
     }
 
     maxStringLength(max: number): this {
-        this._rules.push(new MaxStringLength(max));
+        this._rules.push(new MaxLengthString(max));
         return this;
     }
 
     minMaxStringLength(min: number, max: number): this {
-        this._rules.push(new MinMaxStringLength(min, max));
+        this._rules.push(new MinMaxLengthString(min, max));
         return this;
     }
 

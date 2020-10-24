@@ -1,5 +1,5 @@
 ﻿import { ValidationResult } from "./ValidationResult";
-import { IValidationGroup } from "./validationGroup";
+import { IValidationGroup, PropertyValidation } from "./validationGroup";
 
 export class Validator<T> {
     private _ruleMap = new Map<any, IValidationGroup<T>>();
@@ -11,14 +11,30 @@ export class Validator<T> {
         }
     }
 
-    validate(key: any): ValidationResult {
+    validate(key: any, value?: any): ValidationResult {
         let validationGroup = this._ruleMap.get(key);
 
         if (validationGroup === undefined) {
             return ValidationResult.validResult;
         }
 
-        return validationGroup.validate(this.obj);
+        return validationGroup.validate(this.obj, value);
+    }
+
+    propertyValidation(property: string): PropertyValidation<T> {
+        let validationGroup = this._ruleMap.get(property);
+
+
+        if (validationGroup == null) {
+            validationGroup = new PropertyValidation<T>(property);
+            this._ruleMap.set(property, validationGroup);
+        }
+
+        if (!(validationGroup instanceof PropertyValidation)) {
+            throw 'property key is already in use for a non PropertyValidation';
+        }
+
+        return validationGroup;
     }
 }
 

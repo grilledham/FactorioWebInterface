@@ -41,6 +41,12 @@ export class TextField extends InputFieldBase {
         return EventListener.onChange(this._input, callback);
     }
 
+    onInput(handler: (value: string) => void): () => void {
+        let callback = () => handler(this.value)
+
+        return EventListener.onInput(this._input, callback);
+    }
+
     onKeyUp(handler: (event?: KeyboardEvent) => void): () => void {
         return EventListener.onKeyUp(this._input, handler);
     }

@@ -39,6 +39,10 @@ export class Field extends FieldBase {
         return () => { };
     }
 
+    onInput(handler: (value: boolean) => void): () => void {
+        return () => { };
+    }
+
     setTooltip(content: string | Node) {
         let tooltip = new Tooltip(content);
         this._label.appendChild(tooltip);

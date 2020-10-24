@@ -34,6 +34,12 @@ export class NumberField extends InputFieldBase {
 
         return EventListener.onChange(this._input, callback);
     }
+
+    onInput(handler: (value: number) => void): () => void {
+        let callback = () => handler(this.value)
+
+        return EventListener.onInput(this._input, callback);
+    }
 }
 
 customElements.define('a-number-field', NumberField);

@@ -69,6 +69,12 @@ export class CheckboxField extends FieldBase {
         return EventListener.onChange(this._input, callback);
     }
 
+    onInput(handler: (value: boolean) => void): () => void {
+        let callback = () => handler(this.value)
+
+        return EventListener.onInput(this._input, callback);
+    }
+
     setTooltip(content: string | Node | Tooltip) {
         this._label.setTooltip(content);
         return this;

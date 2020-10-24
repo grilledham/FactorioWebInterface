@@ -5,9 +5,23 @@ import { BaseElement, Lifecycle } from "./baseElement";
 import { VirtualComponent } from "./virtualComponent";
 import { FlexPanel } from "./flexPanel";
 import { NodeHelper } from "../utils/nodeHelper";
+import { Observable } from "../utils/observable";
+import { FormModel, SetOptions, TouchMode, ValidationMode } from "../utils/form/formModel";
 
 export class VirtualForm extends VirtualComponent {
-    private subscriptions: (() => void)[] = [];
+    private static _quickSetOptions: SetOptions = {
+        touch: TouchMode.touch,
+        validate: ValidationMode.validate,
+        sanitize: false
+    };
+
+    private static _setOptions: SetOptions = {
+        touch: TouchMode.touch,
+        validate: ValidationMode.validate,
+        sanitize: true
+    };
+
+    private _subscriptions: (() => void)[] = [];
     private _fields: FieldBase[];
 
     constructor(private dataContext: ObservableObject, fieldsOrBaseElement?: FieldBase[] | BaseElement) {
@@ -68,19 +82,29 @@ export class VirtualForm extends VirtualComponent {
     }
 
     private connected() {
+        let dataContext = this.dataContext;
+
+
         for (let field of this._fields) {
             let property = field.property;
             if (property == null) {
                 continue;
             }
 
-            field.value = this.dataContext[property];
+            dataContext.bind(property, event => field.value = event, this._subscriptions);
 
-            let sub = this.dataContext.propertyChanged(property, event => field.value = event);
-            this.subscriptions.push(sub);
+            if (dataContext instanceof FormModel) {
+                let formModel = dataContext as FormModel;
 
-            let fieldSub = field.onChange(value => this.dataContext[property] = value);
-            this.subscriptions.push(fieldSub);
+                let quickFieldSub = field.onInput(value => formModel.set(property, value, VirtualForm._quickSetOptions));
+                this._subscriptions.push(quickFieldSub);
+
+                let fieldSub = field.onChange(value => formModel.set(property, value, VirtualForm._setOptions));
+                this._subscriptions.push(fieldSub);
+            } else {
+                let fieldSub = field.onChange(value => dataContext[property] = value);
+                this._subscriptions.push(fieldSub);
+            }
         }
 
         if (ObservableErrors.isType(this.dataContext)) {
@@ -94,16 +118,12 @@ export class VirtualForm extends VirtualComponent {
                 field.error = errors.getError(property).error;
 
                 let subscription = errors.errorChanged(property, event => field.error = event.error);
-                this.subscriptions.push(subscription);
+                this._subscriptions.push(subscription);
             }
         }
     }
 
     private disconnected() {
-        for (let sub of this.subscriptions) {
-            sub();
-        }
-
-        this.subscriptions.length = 0;
+        Observable.unSubscribeAll(this._subscriptions);
     }
 }

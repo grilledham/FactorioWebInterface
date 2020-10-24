@@ -34,7 +34,7 @@ export class NotNull implements IValidationRule<void>{
     }
 }
 
-export class MaxStringLength implements IValidationRule<void>{
+export class MaxLengthString implements IValidationRule<void>{
     constructor(public readonly max: number) {
     }
 
@@ -47,7 +47,7 @@ export class MaxStringLength implements IValidationRule<void>{
     }
 }
 
-export class MinMaxStringLength implements IValidationRule<void>{
+export class MinMaxLengthString implements IValidationRule<void>{
     constructor(public readonly min: number, public readonly max: number) {
     }
 

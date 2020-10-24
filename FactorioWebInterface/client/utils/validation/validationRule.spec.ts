@@ -1,5 +1,5 @@
 ﻿import { ValidationResult } from "./ValidationResult";
-import { NotEmptyString, NoWhitespaceString, NotNull, MaxStringLength, MinMaxStringLength, EqualToOtherString } from "./validationRule";
+import { NotEmptyString, NoWhitespaceString, NotNull, MaxLengthString, MinMaxLengthString, EqualToOtherString } from "./validationRule";
 import { strict } from "assert";
 import { assertValidationResultEqual } from "../../testUtils/utils/validation";
 
@@ -95,7 +95,7 @@ describe('ValidationRule', function () {
         for (const testCase of testCases) {
             it(testCase.name, function () {
                 // Arrange.
-                const rule = new MaxStringLength(testCase.max);
+                const rule = new MaxLengthString(testCase.max);
 
                 // Act.
                 const result = rule.validate(testCase.value);
@@ -128,7 +128,7 @@ describe('ValidationRule', function () {
         for (const testCase of testCases) {
             it(testCase.name, function () {
                 // Arrange.
-                const rule = new MinMaxStringLength(testCase.min, testCase.max);
+                const rule = new MinMaxLengthString(testCase.min, testCase.max);
 
                 // Act.
                 const result = rule.validate(testCase.value);

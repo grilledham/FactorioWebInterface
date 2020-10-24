@@ -41,6 +41,12 @@ export class TimeField extends InputFieldBase {
 
         return EventListener.onChange(this._input, callback);
     }
+
+    onInput(handler: (value: Date) => void): () => void {
+        let callback = () => handler(this.value)
+
+        return EventListener.onInput(this._input, callback);
+    }
 }
 
 customElements.define('a-time-field', TimeField);

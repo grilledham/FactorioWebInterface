@@ -13,4 +13,5 @@ export abstract class FieldBase extends BaseElement {
     abstract error: string
 
     abstract onChange(handler: (value: any) => void): () => void;
+    abstract onInput(handler: (value: any) => void): () => void;
 }

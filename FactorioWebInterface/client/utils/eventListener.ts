@@ -5,6 +5,12 @@
         return () => element.removeEventListener('change', handler);
     }
 
+    static onInput(element: Node, handler: (event?: Event) => void): () => void {
+        element.addEventListener('input', handler);
+
+        return () => element.removeEventListener('input', handler);
+    }
+
     static onClick(element: Node, handler: (event?: MouseEvent) => void): () => void {
         element.addEventListener('click', handler);
 
